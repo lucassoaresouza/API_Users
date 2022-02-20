@@ -1,5 +1,6 @@
 from typing import List
 
+from customers.helpers import phone_to_E164
 from customers.enums import Genders, Types, Regions
 from customers.models import Customer
 
@@ -24,8 +25,8 @@ class CustomerParser():
     def parse_phones(self, row):
         phone = row.pop('phone')
         cell = row.pop('cell')
-        row['telephone_numbers'] = [phone]
-        row['mobile_numbers'] = [cell]
+        row['telephone_numbers'] = [phone_to_E164(phone)]
+        row['mobile_numbers'] = [phone_to_E164(cell)]
 
     def get_customer_type(self, row):
         row['type'] = Types.LABORIOUS
