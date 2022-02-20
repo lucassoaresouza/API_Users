@@ -8,12 +8,16 @@ class Types(str, Enum):
 
 
 class Genders(str, Enum):
-    FEMALE = 'F'
-    MALE = 'M'
+    FEMALE = 'f'
+    MALE = 'm'
 
 
 class Regions(str, Enum):
-    CENTER = 'centro'
+    MIDDLE = 'centro'
+    MIDWEST = 'centro-oeste'
+    MIDEAST = 'centro-leste'
+    MIDSOUTH = 'centro-sul'
+    MIDNORTH = 'centro-norte'
     NORTH = 'norte'
     NORTHEAST = 'nordeste'
     EAST = 'leste'

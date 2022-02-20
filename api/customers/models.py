@@ -65,8 +65,6 @@ class Customer(BaseModel):
 
     location: Location
 
-    timezone: Timezone
-
     email: str
 
     birthday: datetime
@@ -79,4 +77,4 @@ class Customer(BaseModel):
 
     picture: Picture
 
-    nationality: Nationalities
+    nationality: Nationalities = Nationalities.BRAZILIAN
