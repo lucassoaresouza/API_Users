@@ -1,9 +1,12 @@
 from abc import abstractmethod
 from typing import List, Dict, Union
 
+from unidecode import unidecode
+
 from customers.helpers import phone_to_E164
 from customers.enums import Genders, Types, Regions
 from customers.models import Customer
+from customers.regions import COUNTRIES_REGIONS_MAPPING
 
 
 class BaseCustomerParser():
@@ -67,7 +70,8 @@ class BaseCustomerParser():
         :param country: String with the code of customer's country.
         :returns: A Regions instance.
         """
-        return Regions.MIDWEST
+        parsed_state = unidecode(state).replace(' ', '_')
+        return COUNTRIES_REGIONS_MAPPING[country][parsed_state]
 
 
 class CustomersFromJson(BaseCustomerParser):
