@@ -1,12 +1,14 @@
 from abc import abstractmethod
+from decimal import Decimal
 from typing import List, Dict, Union
 
 from unidecode import unidecode
 
-from customers.helpers import phone_to_E164
+from customers.helpers import phone_to_E164, is_in_rectangle
 from customers.enums import Genders, Types, Regions
 from customers.models import Customer
 from customers.regions import COUNTRIES_REGIONS_MAPPING
+from customers.types_boundaries import BOUNDARIES_MAPPING
 
 
 class BaseCustomerParser():
@@ -53,13 +55,35 @@ class BaseCustomerParser():
         )
         return genders[value]
 
-    def get_type(self, latitude: str, longitude: str) -> Types:
+    def get_type(
+        self, latitude: str, longitude: str, country: str = 'BR'
+    ) -> Types:
         """
         Selects the customer type according the coordinates boundaries.
         :param latitude: String with the latitude.
         :param longitude: String with the longitude.
+        :param country: String with the code of customer's country.
         :returns: A Type instance.
         """
+        boudaries = BOUNDARIES_MAPPING[country]
+        lon = Decimal(longitude)
+        lat = Decimal(latitude)
+        for boundary in boudaries.get('ESPECIAL', []):
+            if is_in_rectangle(
+                top_right=(boundary['minlon'], boundary['maxlat']),
+                bottom_left=(boundary['maxlon'], boundary['minlat']),
+                point=(lon, lat)
+            ):
+                return Types.ESPECIAL
+
+        for boundary in boudaries.get('NORMAL', []):
+            if is_in_rectangle(
+                top_right=(boundary['minlon'], boundary['maxlat']),
+                bottom_left=(boundary['maxlon'], boundary['minlat']),
+                point=(lon, lat)
+            ):
+                return Types.NORMAL
+
         return Types.LABORIOUS
 
     def get_region(self, state, country: str = 'BR') -> Regions:
@@ -82,13 +106,16 @@ class CustomersFromJson(BaseCustomerParser):
         :param row: A Dict with the customer data set.
         :returns: A Customer instance.
         """
-        row['type'] = self.get_type(latitude='0', longitude='0')
         row['gender'] = self.parse_gender(value=row.get('gender'))
         self.parse_phones(row=row)
         self.parse_birthday(row=row)
         self.parse_registered(row=row)
         row['location']['region'] = self.get_region(
             state=row['location']['state'])
+        coordinates = row['location']['coordinates']
+        row['type'] = self.get_type(
+            latitude=coordinates['latitude'],
+            longitude=coordinates['longitude'])
         return Customer(**row)
 
     def parse_phones(self, row) -> None:
