@@ -26,7 +26,7 @@ BR_REGIONS = {
     "rondonia": Regions.NORTH,
     "roraima": Regions.NORTH,
     "santa_catarina": Regions.SOUTH,
-    "são_paulo": Regions.SOUTHEAST,
+    "sao_paulo": Regions.SOUTHEAST,
     "sergipe": Regions.NORTHEAST,
     "tocantins": Regions.NORTH
 }
