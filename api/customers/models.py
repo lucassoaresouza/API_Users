@@ -78,3 +78,10 @@ class Customer(BaseModel):
     picture: Picture
 
     nationality: Nationalities = Nationalities.BRAZILIAN
+
+
+class Paginator(BaseModel):
+    pageNumber: int
+    pageSize: int
+    totalCount: int
+    users: List[Customer]
