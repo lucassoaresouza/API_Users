@@ -31,8 +31,8 @@ def is_in_rectangle(
     :returns: True if the point is in rectangle otherwise False.
     """
     if (
-        point[0] > bottom_left[0] and point[0] < top_right[0] and
-        point[1] > bottom_left[1] and point[1] < top_right[1]
+        point[0] >= bottom_left[0] and point[0] <= top_right[0] and
+        point[1] >= bottom_left[1] and point[1] <= top_right[1]
     ):
         return True
     return False
