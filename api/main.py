@@ -1,8 +1,11 @@
 from typing import Dict
 
 from fastapi import FastAPI, HTTPException
-from customers.initializer import initialize as customer_initializer
+
 from customers.enums import Regions, Classifications
+from customers.initializer import initialize as customer_initializer
+from customers.models import Paginator
+from customers.pagination import CustomerPagination
 
 app = FastAPI()
 
@@ -21,8 +24,18 @@ def healthcheck():
 
 @app.get("/customers/")
 async def customers_by_region(
-    country: str, region: Regions, classification: Classifications
-):
+    country: str,
+    region: Regions,
+    classification: Classifications,
+    page: int = 0
+) -> Paginator:
+    """
+    Read and filter Customers view.
+    :param country: The string with the country code. I.e.: 'BR'
+    :param region: The selected region. A Regions instance.
+    :param classification: A Classification instance.
+    :param page: The actual page number.
+    """
     customers = application_data['Costumers']
     if not customers.get(country):
         msg = f"Não foram encontrados clientes com desse país [{country}]"
@@ -38,4 +51,6 @@ async def customers_by_region(
             f"classificação [{classification}]")
         raise HTTPException(status_code=404, detail=msg)
 
-    return customers[country][region][classification]
+    filtered_customers = customers[country][region][classification]
+    return CustomerPagination(
+        customers=filtered_customers, page_number=page).paginate()
