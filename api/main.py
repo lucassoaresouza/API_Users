@@ -14,11 +14,17 @@ application_data: Dict = {}
 
 @app.on_event("startup")
 async def startup_event():
+    """
+    Initialize the required data.
+    """
     application_data['Costumers'] = customer_initializer()
 
 
 @app.get("/")
 def healthcheck():
+    """
+    Checks if the API is online.
+    """
     return {"status": "ok"}
 
 

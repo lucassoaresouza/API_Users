@@ -81,7 +81,11 @@ class Customer(BaseModel):
 
 
 class Paginator(BaseModel):
+
     pageNumber: int
+
     pageSize: int
+
     totalCount: int
+
     users: List[Customer]
