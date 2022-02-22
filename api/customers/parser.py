@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import List, Dict, Union
 
 from customers.helpers import phone_to_E164, is_in_rectangle, string_to_key
-from customers.enums import Genders, Types, Regions
+from customers.enums import Genders, Classifications, Regions
 from customers.models import Customer
 from customers.regions import COUNTRIES_REGIONS_MAPPING
 from customers.types_boundaries import BOUNDARIES_MAPPING
@@ -53,15 +53,16 @@ class BaseCustomerParser():
         )
         return genders[value]
 
-    def get_type(
+    def get_classification(
         self, latitude: str, longitude: str, country: str = 'BR'
-    ) -> Types:
+    ) -> Classifications:
         """
-        Selects the customer type according the coordinates boundaries.
+        Selects the customer classifications
+        according the coordinates boundaries.
         :param latitude: String with the latitude.
         :param longitude: String with the longitude.
         :param country: String with the code of customer's country.
-        :returns: A Type instance.
+        :returns: A Classifications instance.
         """
         boudaries = BOUNDARIES_MAPPING[country]
         lon = Decimal(longitude)
@@ -72,7 +73,7 @@ class BaseCustomerParser():
                 bottom_left=(boundary['maxlon'], boundary['minlat']),
                 point=(lon, lat)
             ):
-                return Types.ESPECIAL
+                return Classifications.ESPECIAL
 
         for boundary in boudaries.get('NORMAL', []):
             if is_in_rectangle(
@@ -80,9 +81,9 @@ class BaseCustomerParser():
                 bottom_left=(boundary['maxlon'], boundary['minlat']),
                 point=(lon, lat)
             ):
-                return Types.NORMAL
+                return Classifications.NORMAL
 
-        return Types.LABORIOUS
+        return Classifications.LABORIOUS
 
     def get_region(self, state, country: str = 'BR') -> Regions:
         """
@@ -111,7 +112,7 @@ class CustomersFromJson(BaseCustomerParser):
         row['location']['region'] = self.get_region(
             state=row['location']['state'])
         coordinates = row['location']['coordinates']
-        row['type'] = self.get_type(
+        row['type'] = self.get_classification(
             latitude=coordinates['latitude'],
             longitude=coordinates['longitude'])
         return Customer(**row)
@@ -184,6 +185,7 @@ class CustomersFromCSV(BaseCustomerParser):
                 thumbnail=row[21]  # picture__thumbnail
             )
         )
-        data['type'] = self.get_type(latitude=row[8], longitude=row[9])
+        data['type'] = self.get_classification(
+            latitude=row[8], longitude=row[9])
         data['location']['region'] = self.get_region(state=row[6])
         return Customer(**data)

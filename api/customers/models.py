@@ -3,7 +3,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from customers.enums import Genders, Types, Regions, Nationalities
+from customers.enums import Genders, Classifications, Regions, Nationalities
 
 
 class Name(BaseModel):
@@ -57,7 +57,7 @@ class Picture(BaseModel):
 
 class Customer(BaseModel):
 
-    type: Types
+    type: Classifications
 
     gender: Genders
 

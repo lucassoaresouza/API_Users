@@ -2,7 +2,7 @@ from typing import Dict
 
 from fastapi import FastAPI, HTTPException
 from customers.initializer import initialize as customer_initializer
-from customers.enums import Regions, Types
+from customers.enums import Regions, Classifications
 
 app = FastAPI()
 
@@ -21,7 +21,7 @@ def healthcheck():
 
 @app.get("/customers/")
 async def customers_by_region(
-    country: str, region: Regions, classification: Types
+    country: str, region: Regions, classification: Classifications
 ):
     customers = application_data['Costumers']
     if not customers.get(country):

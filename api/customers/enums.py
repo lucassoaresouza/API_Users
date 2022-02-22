@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Types(str, Enum):
+class Classifications(str, Enum):
     ESPECIAL = 'especial'
     NORMAL = 'normal'
     LABORIOUS = 'laborious'

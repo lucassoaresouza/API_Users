@@ -7,7 +7,7 @@ from customers.parser import CustomersFromJson, CustomersFromCSV
 
 def filter_customers(customers: List[Customer], country: str = 'BR') -> None:
     """
-    Filters a customer by country, region and type.
+    Filters a customer by country, region and classifications.
     :param customer: A Customer model instance
     :param country: String with the code of customer's country.
     """
