@@ -2,9 +2,7 @@ from abc import abstractmethod
 from decimal import Decimal
 from typing import List, Dict, Union
 
-from unidecode import unidecode
-
-from customers.helpers import phone_to_E164, is_in_rectangle
+from customers.helpers import phone_to_E164, is_in_rectangle, string_to_key
 from customers.enums import Genders, Types, Regions
 from customers.models import Customer
 from customers.regions import COUNTRIES_REGIONS_MAPPING
@@ -20,10 +18,10 @@ class BaseCustomerParser():
     def __init__(self, data: List = None):
         """
         Class constructor.
-        :param data: A list of customers data.
+        :param data: A Dict of classified customers data.
         """
         self.rows: List = data
-        self.customers: List[Customer] = []
+        self.customers: Dict = {}
         self.parse()
 
     @abstractmethod
@@ -42,7 +40,26 @@ class BaseCustomerParser():
         """
         for row in self.rows:
             customer = self.parse_row(row)
-            self.customers.append(customer)
+            self.classify(customer)
+
+    def classify(self, customer: Customer, country: str = 'BR') -> None:
+        """
+        Classifies a customer by country, region and type.
+        :param customer: A Customer model instance
+        :param country: String with the code of customer's country.
+        """
+        region = customer.location.region.value
+
+        if not self.customers.get(country):
+            self.customers[country] = {}
+
+        if not self.customers[country].get(region):
+            self.customers[country][region] = {}
+
+        if not self.customers[country][region].get(customer.type):
+            self.customers[country][region][customer.type] = []
+
+        self.customers[country][region][customer.type].append(customer)
 
     def parse_gender(self, value: str) -> Genders:
         """
@@ -94,8 +111,8 @@ class BaseCustomerParser():
         :param country: String with the code of customer's country.
         :returns: A Regions instance.
         """
-        parsed_state = unidecode(state).replace(' ', '_')
-        return COUNTRIES_REGIONS_MAPPING[country][parsed_state]
+        state_key = string_to_key(state)
+        return COUNTRIES_REGIONS_MAPPING[country][state_key]
 
 
 class CustomersFromJson(BaseCustomerParser):

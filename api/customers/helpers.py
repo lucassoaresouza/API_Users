@@ -2,6 +2,8 @@ from decimal import Decimal
 import re
 from typing import Tuple
 
+from unidecode import unidecode
+
 
 def phone_to_E164(phone: str, country_code: int = 55):
     """
@@ -34,3 +36,13 @@ def is_in_rectangle(
     ):
         return True
     return False
+
+
+def string_to_key(state: str):
+    """
+    Parses a string to a key.
+    Replaces accent and spaces.
+    :param state: string to be parsed.
+    :returns: A string without accents and spaces.
+    """
+    return unidecode(state).replace(' ', '_')
