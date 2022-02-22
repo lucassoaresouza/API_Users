@@ -21,7 +21,7 @@ class BaseCustomerParser():
         :param data: A Dict of classified customers data.
         """
         self.rows: List = data
-        self.customers: Dict = {}
+        self.customers: List[Customer] = []
         self.parse()
 
     @abstractmethod
@@ -40,26 +40,7 @@ class BaseCustomerParser():
         """
         for row in self.rows:
             customer = self.parse_row(row)
-            self.classify(customer)
-
-    def classify(self, customer: Customer, country: str = 'BR') -> None:
-        """
-        Classifies a customer by country, region and type.
-        :param customer: A Customer model instance
-        :param country: String with the code of customer's country.
-        """
-        region = customer.location.region.value
-
-        if not self.customers.get(country):
-            self.customers[country] = {}
-
-        if not self.customers[country].get(region):
-            self.customers[country][region] = {}
-
-        if not self.customers[country][region].get(customer.type):
-            self.customers[country][region][customer.type] = []
-
-        self.customers[country][region][customer.type].append(customer)
+            self.customers.append(customer)
 
     def parse_gender(self, value: str) -> Genders:
         """

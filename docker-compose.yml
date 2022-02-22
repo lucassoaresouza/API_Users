@@ -5,6 +5,9 @@ services:
     build: .
     working_dir: /code/api
     command: uvicorn main:app --host 0.0.0.0 --reload
+    environment:
+      - CUSTOMERS_CSV_URL=https://storage.googleapis.com/juntossomosmais-code-challenge/input-backend.csv
+      - CUSTOMERS_JSON_URL=https://storage.googleapis.com/juntossomosmais-code-challenge/input-backend.json
     volumes:
       - .:/code
     ports:
