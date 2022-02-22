@@ -1,8 +1,8 @@
 from typing import Dict
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from customers.initializer import initialize as customer_initializer
-
+from customers.enums import Regions, Types
 
 app = FastAPI()
 
@@ -19,11 +19,23 @@ def healthcheck():
     return {"status": "ok"}
 
 
-@app.get("/customers")
-async def all_customers():
-    return application_data['Costumers']
+@app.get("/customers/")
+async def customers_by_region(
+    country: str, region: Regions, classification: Types
+):
+    customers = application_data['Costumers']
+    if not customers.get(country):
+        msg = f"Não foram encontrados clientes com desse país [{country}]"
+        raise HTTPException(status_code=404, detail=msg)
 
+    if not customers[country].get(region):
+        msg = f"Não foram encontrados clientes com dessa região [{region}]"
+        raise HTTPException(status_code=404, detail=msg)
 
-@app.get("/customers/{item_id}")
-async def read_customers(item_id: str):
-    return application_data['Costumers'][int(item_id)-1]
+    if not customers[country][region].get(classification):
+        msg = (
+            "Não foram encontrados clientes com essa "
+            f"classificação [{classification}]")
+        raise HTTPException(status_code=404, detail=msg)
+
+    return customers[country][region][classification]
