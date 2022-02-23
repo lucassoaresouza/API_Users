@@ -28,7 +28,7 @@ class CustomerPagination():
         Get a interval of the customers list to make a Paginator instance.
         :returns: A Paginator instance.
         """
-        initial_value = self.page_number * self.page_size
+        initial_value = (self.page_number - 1) * self.page_size
         final_value = initial_value + self.page_size
         page = self.customers[initial_value:final_value]
         return Paginator(
