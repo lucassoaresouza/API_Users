@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 from customers.models import Customer
-from customers.external_api import CustomersDownload
+from customers.external_api import CustomersDownloader
 from customers.parser import CustomersFromJson, CustomersFromCSV
 
 
@@ -35,7 +35,7 @@ def initialize() -> Dict:
         download -> parser -> filter
     :returns: Filtered Customers instances.
     """
-    downloader = CustomersDownload()
+    downloader = CustomersDownloader()
     downloader.download()
     csv_customers = CustomersFromCSV(downloader.csv_data).customers
     json_customers = CustomersFromJson(downloader.json_data).customers
