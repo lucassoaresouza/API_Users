@@ -1,6 +1,7 @@
 import pytest
 
-from ...customers.helpers import phone_to_E164, is_in_rectangle, string_to_key
+from api.customers.helpers import phone_to_E164, is_in_rectangle, string_to_key
+
 
 @pytest.mark.parametrize(
     "test_input,expected",
@@ -17,9 +18,9 @@ def test_phone_to_E164(test_input, expected):
 @pytest.mark.parametrize(
     "test_bottom_left,test_top_right,test_point,expected",
     [
-        ((-4,2), (-2,4), (-3,3), True),
-        ((-4,2), (-2,4), (-4,4), True),
-        ((-4,2), (-2,4), (-5,5), False)
+        ((-4, 2), (-2, 4), (-3, 3), True),
+        ((-4, 2), (-2, 4), (-4, 4), True),
+        ((-4, 2), (-2, 4), (-5, 5), False)
     ]
 )
 def test_is_in_rectangle(
@@ -28,7 +29,7 @@ def test_is_in_rectangle(
     test_point,
     expected
 ):
-    result = is_in_rectangle(test_bottom_left,test_top_right,test_point)
+    result = is_in_rectangle(test_bottom_left, test_top_right, test_point)
     assert result == expected
 
 
